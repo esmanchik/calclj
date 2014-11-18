@@ -35,8 +35,6 @@
 (defn ^:dynamic advance [p]
   (merge p (next-token (:exp p))))
 
-(defn )
-
 (defn ^:dynamic result [p v] (assoc p :res v))
 
 (defn ^:dynamic equal-priority [left token rbp p]
@@ -48,8 +46,7 @@
         (equal-priority
          (:res l) (:token n) rbp n)
         )
-      (result p left)
-      ; {:res left :exp (cons token (:exp p))}
+      (result (assoc p :exp (cons token (:exp p))) left)
       )
     (result p left)
     )
