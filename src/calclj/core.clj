@@ -44,14 +44,13 @@
 
 (defn ^:dynamic result [p v] (assoc p :res v))
 
-(defn ^:dynamic equal-priority [left token rbp p]
-  (if token
+(defn ^:dynamic equal-priority [left rbp p]
+  (if-let [token (:token p)]
     (if (> (lbp token) rbp)
       (let [l (led token left p)
             n (advance l)
             e (:exp l)]
-        (equal-priority
-         (:res l) (:token n) rbp n)
+        (equal-priority (:res l) rbp n)
         )
       (-> p (result left) (unadvance token))
       )
@@ -60,12 +59,9 @@
   )
 
 (defn ^:dynamic expression [rbp p]
-  (let [n (advance p)
-        nn (advance n)]
+  (let [n (advance p)]
     (if-let [left (:token n)]
-      (if-let [token (:token nn)]
-        (equal-priority left token rbp nn)
-        (result n left))
+      (equal-priority left rbp (advance n))
       (result n 0))
     )
   )
