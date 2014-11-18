@@ -35,6 +35,13 @@
 (defn ^:dynamic advance [p]
   (merge p (next-token (:exp p))))
 
+(defn ^:dynamic unadvance [p token]
+  (assoc p
+    :token token
+    :exp (cons (:token p) (:exp p))
+    )
+  )
+
 (defn ^:dynamic result [p v] (assoc p :res v))
 
 (defn ^:dynamic equal-priority [left token rbp p]
@@ -46,7 +53,7 @@
         (equal-priority
          (:res l) (:token n) rbp n)
         )
-      (result (assoc p :exp (cons token (:exp p))) left)
+      (-> p (result left) (unadvance token))
       )
     (result p left)
     )
@@ -75,19 +82,20 @@
    0 {:exp [1 "+" 2]
       :res []}))
 
-(clojure.tools.trace/dotrace
- [expression equal-priority led]
- (expression 0
-             {:exp [1 "+" 2 "*" 5 "+" 4]
-              :res []}))
-
 (def p
   (clojure.tools.trace/dotrace
-     [expression equal-priority led]
-     (expression 0
-                 {:exp [[1 "+" 2] "/" 3]
-                  :res []}))
+   [expression equal-priority led]
+   (expression 0
+               {:exp [1 "+" 2 "*" 5 "+" 4]
+                :res []}))
   )
+
+
+(comment clojure.tools.trace/dotrace
+ [expression equal-priority led]
+ (expression 0
+             {:exp [[1 "+" 2] "/" 3]
+              :res []}))
 
 (defn -main
   "I don't do a whole lot ... yet."
