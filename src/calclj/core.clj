@@ -156,6 +156,12 @@
  [expression equal-priority]
  (parse {} [[1 "+" 2] "/" 3]))
 
+(def x 4)
+
+(clojure.tools.trace/dotrace
+ [expression equal-priority]
+ (parse {} [x "-" [1 "+" 2] "/" 3]))
+
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
